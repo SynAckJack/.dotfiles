@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2059
+# shellcheck disable=SC2059,SC2120,SC2119
 
 set -euo pipefail
 IFS=$'\n\t'
