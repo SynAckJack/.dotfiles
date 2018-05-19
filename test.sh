@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-<<<<<<< HEAD
 # shellcheck disable=SC2059,SC2120,SC2119
-=======
-# shellcheck disable=SC2059,SC2120
->>>>>>> 8986cdf7b63126ea36daed5219637b40b8d677e9
+
 
 set -euo pipefail
 IFS=$'\n\t'
