@@ -1,0 +1,10 @@
+#.travis.yml
+
+langage: bash
+sudo: enabled
+before_install:
+  - sudo chmod +x check.sh
+script:
+  - ./check.sh
+notifications:
+  email: false
