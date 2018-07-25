@@ -156,12 +156,16 @@ function install_cirrus {
 }
 
 function install_gpg {
+	local download
+	local download_dmg
+	local hash 
+	local installer_path
 
 	echo "${INFO}|||${NC} Installing GPG Tools..."
 	#Get latest version of GPGTools from the GPGTools home page (work something more reliable out for this)
-	local download="$(curl -s "https://gpgtools.org" | grep "version" | awk -F "/" '{ print $4 }')"
+	download="$(curl -s "https://gpgtools.org" | grep "version" | awk -F "/" '{ print $4 }')"
 
-	local download_dmg="GPG_Suite-${download}.dmg"
+	download_dmg="GPG_Suite-${download}.dmg"
 
 	if [ -f "${download_dmg}" ] ; then
 
@@ -176,14 +180,14 @@ function install_gpg {
 	fi
 
 	#Retrieve hash from gpgtools.org
-	local hash="$(curl -s "https://gpgtools.org/gpgsuite.html" | grep "SHA256" | awk -F ">" ' $5>0 { print substr($5,1,64) } ')"
+	hash="$(curl -s "https://gpgtools.org/gpgsuite.html" | grep "SHA256" | awk -F ">" ' $5>0 { print substr($5,1,64) } ')"
 
 	#Compare hashes of download to hash online
 	if [[ "$(shasum -a 256 "$download_dmg")" = "$hash"* ]]; then
 
 		echo "${PASS}|||${NC} Hash verified"
 
-		local installer_path="/Volumes/GPG Suite"
+		installer_path="/Volumes/GPG Suite"
 
 		if hdiutil attach -quiet "$download_dmg" ; then
 		echo "${PASS}|||${NC} Mounted installer"
@@ -280,7 +284,7 @@ function cleanup {
 	for d in "${downloaded_dmgs[@]}" 
 	do
 		echo "${INFO}|||${NC} deleting ${d}"
-		rm $d
+		rm "${d}"
 	done 
 
 	for i in "${mounted_installers[@]}" 

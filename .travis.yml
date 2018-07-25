@@ -4,6 +4,9 @@ langage: bash
 sudo: enabled
 before_install:
   - sudo chmod +x check.sh
+ignore:
+  - library.sh
+  - dump.sh
 script:
   - ./check.sh
 notifications:
