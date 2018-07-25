@@ -8,10 +8,19 @@ set -euo pipefail
 # -u don't use undefined vars
 # -o pipefall pipelines fails on the first non-zero status code
 
+downloaded_dmgs=()
+mounted_installers=()
+
+#Set colours for easy spotting of errors
+ERROR=$(echo -en '\033[0;31m')
+PASS=$(echo -en '\033[0;32m')
+NC=$(echo -en '\033[0m')
+WARN=$(echo -en '\033[0;33m')
+INFO=$(echo -en '\033[0;35m')
 
 function usage {
 
-	echo -e "\\nMake macOS the way it is meant to be 🤙\\n"
+	echo "\\nMake macOS the way it is meant to be 🤙\\n"
 	echo "Usage: "
 	echo " checkfv		- Check FileVault is enabled ⛑"
 	echo " customise		- Customise the default options of macOS 😍"
@@ -25,13 +34,13 @@ function usage {
 	echo " brew			- Install Homebrew 🍺"
 	echo " all 		- Install the items listed above  ❤️"
 
-	echo -e "\\nMake macOS the way it is meant to be 🤙\\n"
+	echo "\\nMake macOS the way it is meant to be 🤙\\n"
 	exit 0
 }
 
 function check_FileVault {
 
-	echo "Checking if FileVault is enabled..."
+	echo "${INFO}|||${NC} Checking if FileVault is enabled..."
 
 	if fdesetup status | grep "On" >/dev/null ; then
 		echo "[✅] Filevault is turned on"
@@ -43,7 +52,7 @@ function check_FileVault {
 
 function customise_defaults {
 
-	echo "Customising the defaults..."
+	echo "${INFO}|||${NC} Customising the defaults..."
 
 	#Disable Guest User
 	#default: sudo defaults write /Library/Preferences/com.apple.AppleFileServer guestAccess -bool true
@@ -141,49 +150,101 @@ function customise_defaults {
 
 function install_cirrus {
 
-	echo "Installing Cirruss..."
+	echo "${INFO}|||${NC} Installing Cirruss..."
 
 	exit 0
 }
 
 function install_gpg {
 
-	echo "Installing GPG Tools..."
+	echo "${INFO}|||${NC} Installing GPG Tools..."
+	#Get latest version of GPGTools from the GPGTools home page (work something more reliable out for this)
+	local download="$(curl -s "https://gpgtools.org" | grep "version" | awk -F "/" '{ print $4 }')"
 
+	local download_dmg="GPG_Suite-${download}.dmg"
+
+	if [ -f "${download_dmg}" ] ; then
+
+		echo "${PASS}|||${NC} ALREADY DOWNLOADED"
+		#Not needed as hash is calculated in if statement later
+		#local download_hash="$(shasum -a 256 "${download_dmg}")"
+
+	elif curl -o "${download_dmg}" "https://releases.gpgtools.org/${download_dmg}"; then
+	 	
+	 	echo "${PASS}|||${NC} DOWNLOADED"
+	 	
+	fi
+
+	#Retrieve hash from gpgtools.org
+	local hash="$(curl -s "https://gpgtools.org/gpgsuite.html" | grep "SHA256" | awk -F ">" ' $5>0 { print substr($5,1,64) } ')"
+
+	#Compare hashes of download to hash online
+	if [[ "$(shasum -a 256 "$download_dmg")" = "$hash"* ]]; then
+
+		echo "${PASS}|||${NC} Hash verified"
+
+		local installer_path="/Volumes/GPG Suite"
+
+		if hdiutil attach -quiet "$download_dmg" ; then
+		echo "${PASS}|||${NC} Mounted installer"
+
+		#Find a way to check if script running as sudo instead of just printing this...
+		echo "${WARN}|||${NC} Requiring sudo to install package..."
+
+			if sudo installer -pkg "${installer_path}/Install.pkg" -target "/" >/dev/null; then
+				echo "${PASS}|||${NC} Installed GPG Tools"
+			else 
+				echo "${ERROR}|||${NC} Failed to Install"
+				exit 1
+			fi
+		else
+			echo "${ERROR}|||${NC} Failed to mount .dmg"
+			exit 1
+		fi
+		echo "${PASS}|||${NC} Completed Installation"
+	else 
+		echo "${ERROR}|||${NC} Failed to verify hash"
+		exit 1
+
+	fi 
+
+	downloaded_dmgs+=("${download_dmg}")
+	mounted_installers+=("${installer_path}")
+	
 	exit 0
 }
 
 function install_sublime {
 
-	echo "Installing Sublime Text..."
+	echo "${INFO}|||${NC} Installing Sublime Text..."
 
 	exit 0
 }
 
 function install_tower {
 
-	echo "Installing Tower..."
+	echo "${INFO}|||${NC} Installing Tower..."
 
 	exit 0
 }
 
 function install_rocket {
 
-	echo "Installing Rocket..."
+	echo "${INFO}|||${NC} Installing Rocket..."
 
 	exit 0
 }
 
 function install_xcode {
 
-	echo "Installing Xcode..."
+	echo "${INFO}|||${NC} Installing Xcode..."
 
 	exit 0
 }
 
 function install_apps {
 
-	echo "Installing apps..."
+	echo "${INFO}|||${NC} Installing apps..."
 
 	#TODO: Amphetamine
 
@@ -199,16 +260,34 @@ function install_apps {
 
 function install_brew {
 
-	echo "Installing Homebrew..."
+	echo "${INFO}|||${NC} Installing Homebrew..."
 
 	exit 0
 }
 
 function install_all {
 
-	echo -e "Installing everything ❤️  ..."
+	echo "${INFO}|||${NC} Installing everything ❤️ ..."
 
 	exit 0
+}
+
+function cleanup {
+
+	#Unmounting and deleting any installers that were mounted or downloaded
+	echo "${INFO}|||${NC} Starting Cleanup"
+
+	for d in "${downloaded_dmgs[@]}" 
+	do
+		echo "${INFO}|||${NC} deleting ${d}"
+		rm $d
+	done 
+
+	for i in "${mounted_installers[@]}" 
+	do
+		echo "${INFO}|||${NC} Unmounting from ${i}"
+		hdiutil detach -quiet "${i}"
+	done
 }
 
 function main {
@@ -260,6 +339,10 @@ function main {
 		usage
 
 	fi
+
+	#Only run if anything has actually been downloaded
+	#E.g if len downloaded_dmgs != 0 then runß
+	cleanup
 
 }
 
