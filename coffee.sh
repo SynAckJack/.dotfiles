@@ -19,7 +19,7 @@ WARN=$(echo -en '\033[0;33m')
 INFO=$(echo -en '\033[0;35m')
 
 function usage {
-
+	#Shellcheck disable=SC2028
 	echo "\\nMake macOS the way it is meant to be 🤙\\n"
 	echo "Usage: "
 	echo " checkfv		- Check FileVault is enabled ⛑"
@@ -34,6 +34,7 @@ function usage {
 	echo " brew			- Install Homebrew 🍺"
 	echo " all 		- Install the items listed above  ❤️"
 
+	#Shellcheck disable=SC2028
 	echo "\\nMake macOS the way it is meant to be 🤙\\n"
 	exit 0
 }
