@@ -10,11 +10,11 @@ function install {
 
 	download="$(curl -s "https://gpgtools.org" | grep "version" | awk -F "/" '{ print $4 }')"
 
-	echo $download 
+	echo "$download" 
 
 	download_dmg="GPG_Suite-${download}.dmg"
 
-	echo $download_dmg
+	echo "$download_dmg"
 
 	if [ -f "${download_dmg}" ] ; then
 
@@ -58,7 +58,7 @@ function install {
 	echo "[FINISHED!!!]"
 
 	dmg+=("${download_dmg}")
-	installer+=("${installer_path}")
+	installers+=("${installer_path}")
 
 }
 
@@ -68,10 +68,10 @@ function cleanup {
 	for d in "${dmg[@]}" 
 	do
 		echo "deleting ${d}"
-		rm $dmg
+		rm "$d"
 	done 
 
-	for i in "${installer[@]}" 
+	for i ing "${installer[@]}" 
 	do
 		echo "Unmounting from ${i}"
 		hdiutil detach -quiet "${i}"
