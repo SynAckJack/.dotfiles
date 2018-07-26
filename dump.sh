@@ -67,13 +67,13 @@ function cleanup {
 
 	for d in "${dmg[@]}" 
 	do
-		echo "deleting ${d}"
-		rm "$d"
+		echo "${INFO}|||${NC} deleting ${d}"
+		rm "${d}"
 	done 
 
-	for i ing "${installer[@]}" 
+	for i in "${installers[@]}" 
 	do
-		echo "Unmounting from ${i}"
+		echo "${INFO}|||${NC} Unmounting from ${i}"
 		hdiutil detach -quiet "${i}"
 	done
 
