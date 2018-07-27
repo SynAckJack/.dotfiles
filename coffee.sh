@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 #coffee.sh
 
+
+#THINGS TO ADD:
+#	- install applications function instead of repeated code in each function
+#	- potentially add .files to be installed
+#	- add function to verify signature of applications before install
+#	- checksum function for applications that have checksums online, again 
+#	  instead of being repeated in functions
+#	- add function to check if running with sudo
+
+
 #Inspired from 0xmachos bittersweet.sh
 
 set -euo pipefail
@@ -37,6 +47,24 @@ function usage {
 	# shellcheck disable=SC2028
 	echo "\\nMake macOS the way it is meant to be 🤙\\n"
 	exit 0
+}
+
+function cleanup {
+
+	#Unmounting and deleting any installers that were mounted or downloaded
+	echo "${INFO}|||${NC} Starting Cleanup"
+	local download_dmg
+	local installer
+
+	download_dmg=${1}
+	installer=${2}
+
+	echo "${INFO}|||${NC} Deleting ${download_dmg}"
+	rm "${download_dmg}"
+
+	echo "${INFO}|||${NC} Unmounting from ${installer}"
+	hdiutil detach -quiet "${installer}"
+	
 }
 
 function check_FileVault {
@@ -213,8 +241,7 @@ function install_gpg {
 
 	fi 
 
-	downloaded_dmgs+=("${download_dmg}")
-	mounted_installers+=("${installer_path}")
+	cleanup "$download_dmg" "$installer_path"
 	
 	exit 0
 }
@@ -222,6 +249,57 @@ function install_gpg {
 function install_sublime {
 
 	echo "${INFO}|||${NC} Installing Sublime Text..."
+	local download_url
+	local download_dmg
+
+	download_url="$(curl -s "https://www.sublimetext.com" | grep ".dmg" | awk -F '"' '{ print $4 }')"
+
+	echo "$download_url"
+
+	download_dmg="$(echo $download_url | awk -F "/" '{ print $4 }')"
+
+	echo "$download_dmg"
+
+	if ! [ -f "${download_dmg}" ] ; then
+
+		#No need for shasum as there is none available on the website
+		if curl -o "${download_dmg}" "${download_url}" ; then
+ 			echo "${PASS}|||${NC} DOWNLOADED"
+ 		else
+ 			echo "${ERROR}|||${NC} Download failed."
+ 			exit 1
+ 		fi
+
+	else 
+		echo "${PASS}|||${NC} ALREADY DOWNLOADED"
+	fi
+
+	if [ -f "${download_dmg}" ] ; then
+
+		installer_path="/Volumes/Sublime Text"
+
+		if hdiutil attach -quiet "$download_dmg" ; then
+		echo "${PASS}|||${NC} Mounted installer"
+
+		#Find a way to check if script running as sudo instead of just printing this...
+		echo "${WARN}|||${NC} Requiring sudo to install package..."
+
+			if sudo cp "${installer_path}/Sublime Text.app" "/Applications" ; then
+				echo "${PASS}|||${NC} Installed Sublime Text"
+			else 
+				echo "${ERROR}|||${NC} Failed to installed Sublime Text"
+				exit 1
+			fi
+		else
+			echo "${ERROR}|||${NC} Failed to mount .dmg"
+			exit 1
+		fi
+		echo "${PASS}|||${NC} Completed Installation"
+	else
+		echo "${ERROR}|||${NC} Something went wrong. Installer is missing."
+		exit 1
+
+	cleanup "$download_dmg" "$installer_path"
 
 	exit 0
 }
@@ -275,24 +353,6 @@ function install_all {
 	echo "${INFO}|||${NC} Installing everything ❤️ ..."
 
 	exit 0
-}
-
-function cleanup {
-
-	#Unmounting and deleting any installers that were mounted or downloaded
-	echo "${INFO}|||${NC} Starting Cleanup"
-
-	for d in "${downloaded_dmgs[@]}" 
-	do
-		echo "${INFO}|||${NC} deleting ${d}"
-		rm "${d}"
-	done 
-
-	for i in "${mounted_installers[@]}" 
-	do
-		echo "${INFO}|||${NC} Unmounting from ${i}"
-		hdiutil detach -quiet "${i}"
-	done
 }
 
 function main {
