@@ -56,21 +56,30 @@ function cleanup {
 	local download_dmg
 	local installer
 
-	download_dmg=${1}
-	installer=${2}
+	download_dmg=${1:?download_dmg not passed to cleanup}
+	installer=${2:?installer not passed to cleanup}
 
 	echo "${INFO}|||${NC} Deleting ${download_dmg}"
-	rm "${download_dmg}"
+	rm -r "${download_dmg}"
 
-	echo "${INFO}|||${NC} Unmounting from ${installer}"
-	hdiutil detach -quiet "${installer}"
-	
+	if [ -f "${installer}" ] ; then
+		if 	echo "${installer}" | grep ".zip" ; then
+
+			echo "${INFO}|||${NC} Deleting ${installer}"
+			rm -rf "${installer}"
+		else 
+
+			echo "${INFO}|||${NC} Unmounting from ${installer}"
+			hdiutil detach -quiet "${installer}"
+		fi
+	fi
 }
 
 function check_FileVault {
 
 	echo "${INFO}|||${NC} Checking if FileVault is enabled..."
 
+	#if fdesetup status | grep "On" >/dev/null ; then
 	if fdesetup status | grep "On" >/dev/null ; then
 		echo "[✅] Filevault is turned on"
 	else 
@@ -284,7 +293,7 @@ function install_sublime {
 		#Find a way to check if script running as sudo instead of just printing this...
 		echo "${WARN}|||${NC} Requiring sudo to install package..."
 
-			if sudo cp "${installer_path}/Sublime Text.app" "/Applications" ; then
+			if sudo cp -r "${installer_path}/Sublime Text.app" "/Applications" ; then
 				echo "${PASS}|||${NC} Installed Sublime Text"
 			else 
 				echo "${ERROR}|||${NC} Failed to installed Sublime Text"
@@ -298,6 +307,7 @@ function install_sublime {
 	else
 		echo "${ERROR}|||${NC} Something went wrong. Installer is missing."
 		exit 1
+	fi
 
 	cleanup "$download_dmg" "$installer_path"
 
@@ -306,8 +316,39 @@ function install_sublime {
 
 function install_tower {
 
-	echo "${INFO}|||${NC} Installing Tower..."
+	if ! [ -f "/Applications/Tower.app" ] ; then
+		download_url="$(curl -s "https://www.git-tower.com/release-notes/mac" | grep ".zip" | awk -F ".zip" ' { print $1 }' | awk -F '"' ' { print $NF } ')"
 
+		download_url+=".zip"
+		download_zip="$(echo $download_url | awk -F "/" ' { print $NF } ')"
+
+
+		if curl -o "$download_zip" "$download_url" ; then
+			echo "DOWNLOADED"
+		else
+			echo "FAILED"
+			exit 1
+		fi
+
+		if unzip -q "$download_zip" -d "." ; then
+			echo "Unzipped $download_zip"
+
+			if sudo cp -r "Tower.app" "/Applications" ; then
+				echo "Installed Tower in Applications!"
+			else
+				echo "Failed to copy to /Applications. Running as sudo?!"
+				exit 1
+			fi
+		else
+			echo "Failed to unzip."
+			exit 1
+		fi
+	else
+		echo "Tower is already installed!"
+		exit 0
+	fi
+
+	cleanup "Tower.app" "$download_zip"
 	exit 0
 }
 
