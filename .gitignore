@@ -1,0 +1,6 @@
+#~/.gitignore
+
+.DS_STORE
+
+#dump* files for development of functions
+dump*
