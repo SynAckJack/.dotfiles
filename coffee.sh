@@ -308,6 +308,12 @@ function install_sublime {
 		exit 1
 	fi
 
+	if "$(ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime)" ; then
+		echo "${PASS}|||${NC} Symlinked Sublime to open from terminal!"
+	else
+		echo "${ERROR}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
+	fi
+
 	cleanup "$download_dmg" "$installer_path"
 
 	exit 0
