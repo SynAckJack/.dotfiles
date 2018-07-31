@@ -308,7 +308,7 @@ function install_sublime {
 		exit 1
 	fi
 
-	if "$(ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime)" ; then
+	if "ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime" ; then
 		echo "${PASS}|||${NC} Symlinked Sublime to open from terminal!"
 	else
 		echo "${ERROR}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
@@ -391,7 +391,8 @@ function install_brew {
 
 	echo "${INFO}|||${NC} Installing Homebrew..."
 
-	if ! [ "$(which brew)" > /dev/null ] ; then
+	if ! [[ "$(command -v brew)" > /dev/null ]] ; then
+		# shellcheck disable=SC2057
 		if [ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ] ; then
 			echo "Homebrew installed!"
 		else
@@ -404,7 +405,7 @@ function install_brew {
 		brew upgrade
 	fi
 
-	if ! [ "$(which brew-file)" > /dev/null ] ; then
+	if ! [[ "$(command -v brew-file)" > /dev/null ]] ; then
 		echo "Installing brew-file"
 
 		if brew install rcmdnk/file/brew-file ; then
@@ -445,7 +446,7 @@ function install_all {
 
 function main {
 
-	local var=${1:-"usage"}
+	#local var=${1:-"usage"}
 
 	# if [[ Internet Connected ]]; then 
 	# 	#Do tha code

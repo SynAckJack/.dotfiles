@@ -13,7 +13,7 @@ alias get_esp32='$HOME/esp/xtensa-esp32-elf/bin'
 #Load .files
 #Based on 0xmachos/dotfiles/.bash_prompt
 for file in ~/.{bash_prompt,aliases}; do
-  
+  # shellcheck source=src/lib.sh
   if [[ -r "${file}" ]] && [[ -f "${file}" ]]; then
     source "${file}"
   fi
@@ -21,7 +21,8 @@ for file in ~/.{bash_prompt,aliases}; do
 done
 
 #Ensure that brew-file wraps the standard brew command correctly
-if [ -f $(brew --prefix)/etc/brew-wrap ];then
-  source $(brew --prefix)/etc/brew-wrap
+# shellcheck source=/dev/null
+if [ -f "$(brew --prefix)/etc/brew-wrap" ];then
+  source "$(brew --prefix)/etc/brew-wrap"
 fi
 
