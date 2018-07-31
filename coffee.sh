@@ -446,6 +446,8 @@ function install_all {
 
 function main {
 
+	# shellcheck disable=SC2214
+	# Remove abpve disable once getopts section is all fixed
 	#local var=${1:-"usage"}
 
 	# if [[ Internet Connected ]]; then 
