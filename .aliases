@@ -1,1 +1,16 @@
-/Users/jackclark/.aliases
+#!/usr/bin/env bash
+#~/.aliases
+
+#Preferred ls implementation
+#Show all files with long listing, in human readable file sizes with symbols
+#for directories, shell scripts etc.
+alias ll='ls -aFlhp'
+
+#Easy ssh to raspberry pi
+alias rpi='ssh raspberrypi.local'
+
+#Open any file with Sublime Text
+alias edit='sublime'               
+
+#Open the current directory in finder            
+alias open='open -a Finder ./' 
