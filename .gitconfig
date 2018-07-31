@@ -1,0 +1,10 @@
+[user]
+	name = SynAckJack
+	email = jackclark340@gmail.com
+	signingkey = 0xD92E95543371CB1F
+
+[commit]
+	gpgsign = true
+
+[gpg]
+	program = /usr/local/MacGPG2/bin/gpg2
