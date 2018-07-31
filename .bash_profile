@@ -13,7 +13,7 @@ alias get_esp32='$HOME/esp/xtensa-esp32-elf/bin'
 #Load .files
 #Based on 0xmachos/dotfiles/.bash_prompt
 for file in ~/.{bash_prompt,aliases}; do
-  # shellcheck source=src/lib.sh
+  # shellcheck source=/dev/null
   if [[ -r "${file}" ]] && [[ -f "${file}" ]]; then
     source "${file}"
   fi
