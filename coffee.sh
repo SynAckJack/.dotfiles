@@ -458,11 +458,6 @@ function main {
 
 	#Include script to check network connection
 
-	else 
-		echo "[❌] Failed to connect to the internet"
-		exit 1
-	fi
-
 	if [[ "${var}" = "checkfv" ]]; then
 		check_FileVault
 
