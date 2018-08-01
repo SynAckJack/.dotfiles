@@ -393,7 +393,7 @@ function install_brew {
 
 	if ! [[ "$(command -v brew)" > /dev/null ]] ; then
 		# shellcheck disable=SC2057
-		if [ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ] ; then
+		if /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ; then
 			echo "Homebrew installed!"
 		else
 			echo "Failed to installe Homebrew..."
@@ -420,7 +420,7 @@ function install_brew {
 
 	local brewFile="./Brewfile"
 
-	if brew file install ; then
+	if brew file install -f "${Brewfile}" ; then
 		echo "${PASS}|||${NC} Packages from Brewfile installed!"
 	else
 		echo "${ERROR}|||${NC} Packages failed to install"
