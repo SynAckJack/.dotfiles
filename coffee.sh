@@ -26,6 +26,7 @@ NC=$(echo -en '\033[0m')
 WARN=$(echo -en '\033[0;33m')
 INFO=$(echo -en '\033[0;35m')
 
+
 function usage {
 	# shellcheck disable=SC2028
 	echo "\\nMake macOS the way it is meant to be 🤙\\n"
@@ -72,6 +73,16 @@ function cleanup {
 			hdiutil detach -quiet "${installer}"
 		fi
 	fi
+}
+
+function check_sudo_permission {
+
+	if [ "$EUID" -ne 0 ]; then
+    # !! SUDO !!
+    	return 0
+  	else 
+    	return 1
+  	fi
 }
 
 function check_FileVault {
@@ -230,7 +241,9 @@ function install_gpg {
 		echo "${PASS}|||${NC} Mounted installer"
 
 		#Find a way to check if script running as sudo instead of just printing this...
-		echo "${WARN}|||${NC} Requiring sudo to install package..."
+		if check_sudo_permission ; then
+			echo "${WARN}|||${NC} Password required to run as sudo"
+		fi
 
 			if sudo installer -pkg "${installer_path}/Install.pkg" -target "/" >/dev/null; then
 				echo "${PASS}|||${NC} Installed GPG Tools"
@@ -290,7 +303,9 @@ function install_sublime {
 		echo "${PASS}|||${NC} Mounted installer"
 
 		#Find a way to check if script running as sudo instead of just printing this...
-		echo "${WARN}|||${NC} Requiring sudo to install package..."
+		if check_sudo_permission ; then
+			echo "${WARN}|||${NC} Password required to run as sudo"
+		fi
 
 			if sudo cp -r "${installer_path}/Sublime Text.app" "/Applications" ; then
 				echo "${PASS}|||${NC} Installed Sublime Text"
@@ -337,6 +352,10 @@ function install_tower {
 
 		if unzip -q "$download_zip" -d "." ; then
 			echo "Unzipped $download_zip"
+
+			if check_sudo_permission ; then
+				echo "${WARN}|||${NC} Password required to run as sudo"
+			fi
 
 			if sudo cp -r "Tower.app" "/Applications" ; then
 				echo "Installed Tower in Applications!"
@@ -421,6 +440,10 @@ function install_brew {
 	#At a later date, this will be changed to either be assigned from the command line or by default this repo path
 	local brewFile="./Brewfile"
 
+	if check_sudo_permission ; then
+		echo "${WARN}|||${NC} Password required to run as sudo"
+	fi
+
 	if brew file install -f "${brewFile}" ; then
 		echo "${PASS}|||${NC} Packages from Brewfile installed!"
 	else
@@ -428,6 +451,10 @@ function install_brew {
 		exit 1
 	fi
 
+	if check_sudo_permission ; then
+		echo "${WARN}|||${NC} Password required to run as sudo"
+	fi
+	
 	# Update Bash after install through homebrew
 	#https://johndjameson.com/blog/updating-your-shell-with-homebrew/
 
