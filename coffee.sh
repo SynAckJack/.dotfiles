@@ -39,7 +39,6 @@ function usage {
 	echo " tower			- Install Tower 💂‍♂️"
 	echo " rocket 		- Install Rocket 👽"
 	echo " xcode		- Install Xcode "
-	echo " appstore 	- Install Appstore apps "
 	echo " brew			- Install Homebrew 🍺"
 	echo " dotfiles		- Install dotfiles 🔑"
 	echo " all 		- Install the items listed above  ❤️"
@@ -390,21 +389,6 @@ function install_xcode {
 	exit 0
 }
 
-function install_apps {
-
-	echo "${INFO}|||${NC} Installing apps..."
-
-	#TODO: Amphetamine
-
-	#TODO: Keynote
-
-	#TODO: Pages
-
-	#TODO: The Unarchiver
-
-	#TODO: Spotify
-	exit 0
-}
 
 function install_brew {
 
@@ -454,7 +438,7 @@ function install_brew {
 	if check_sudo_permission ; then
 		echo "${WARN}|||${NC} Password required to run as sudo"
 	fi
-	
+
 	# Update Bash after install through homebrew
 	#https://johndjameson.com/blog/updating-your-shell-with-homebrew/
 
@@ -524,9 +508,6 @@ function main {
 
 	elif [[ "${var}" = "xcode" ]]; then
 		install_xcode
-
-	elif [[ "${var}" = "appstore" ]]; then
-		install_apps
 
 	elif [[ "${var}" = "brew" ]]; then
 		install_brew
