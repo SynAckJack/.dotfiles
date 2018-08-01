@@ -418,9 +418,10 @@ function install_brew {
 		echo "brew-file already installed"
 	fi
 
+	#At a later date, this will be changed to either be assigned from the command line or by default this repo path
 	local brewFile="./Brewfile"
 
-	if brew file install -f "${Brewfile}" ; then
+	if brew file install -f "${brewFile}" ; then
 		echo "${PASS}|||${NC} Packages from Brewfile installed!"
 	else
 		echo "${ERROR}|||${NC} Packages failed to install"
