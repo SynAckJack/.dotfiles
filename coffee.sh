@@ -428,6 +428,20 @@ function install_brew {
 		exit 1
 	fi
 
+	# Update Bash after install through homebrew
+	#https://johndjameson.com/blog/updating-your-shell-with-homebrew/
+
+	#Add new bash to accepted shells
+	if sudo echo "/usr/local/bin/bash" >> /etc/shells ; then
+		#Change shell to new bash
+		if chsh -s /usr/local/bin/bash ; then
+			echo "${PASS}|||${NC} Shell changed to Bash from homebrew"
+		else
+			echo "${ERROR}|||${NC} Failed to change shell to new Bash"
+			exit 1
+		fi
+	fi
+
 	exit 0
 }
 
