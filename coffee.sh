@@ -418,6 +418,14 @@ function install_brew {
 		echo "brew-file already installed"
 	fi
 
+	local brewFile="./Brewfile"
+
+	if brew file install ; then
+		echo "${PASS}|||${NC} Packages from Brewfile installed!"
+	else
+		echo "${ERROR}|||${NC} Packages failed to install"
+		exit 1
+	fi
 
 	exit 0
 }
@@ -446,112 +454,57 @@ function install_all {
 
 function main {
 
-	# shellcheck disable=SC2214
-	# Remove abpve disable once getopts section is all fixed
-	#local var=${1:-"usage"}
+	local var=${1:-"usage"}
 
-	# if [[ Internet Connected ]]; then 
-	# 	#Do tha code
+	if [[ Internet Connected ]]; then 
+		#Do tha code
 
-	# else 
-	# 	echo "[❌] Failed to connect to the internet"
-	# 	exit 1
-	# fi
+	else 
+		echo "[❌] Failed to connect to the internet"
+		exit 1
+	fi
 
-	# if [[ "${var}" = "checkfv" ]]; then
-	# 	check_FileVault
+	if [[ "${var}" = "checkfv" ]]; then
+		check_FileVault
 
-	# elif [[ "${var}" = "customise" ]]; then
-	# 	customise_defaults
+	elif [[ "${var}" = "customise" ]]; then
+		customise_defaults
 
-	# elif [[ "${var}" = "cirrus" ]]; then
-	# 	install_cirrus
+	elif [[ "${var}" = "cirrus" ]]; then
+		install_cirrus
 
-	# elif [[ "${var}" = "gpgtools" ]]; then
-	# 	install_gpg
+	elif [[ "${var}" = "gpgtools" ]]; then
+		install_gpg
 
-	# elif [[ "${var}" = "sublime" ]]; then
-	# 	install_sublime
+	elif [[ "${var}" = "sublime" ]]; then
+		install_sublime
 
-	# elif [[ "${var}" = "tower" ]]; then
-	# 	install_tower
+	elif [[ "${var}" = "tower" ]]; then
+		install_tower
 
-	# elif [[ "${var}" = "rocket" ]]; then
-	# 	install_rocket
+	elif [[ "${var}" = "rocket" ]]; then
+		install_rocket
 
-	# elif [[ "${var}" = "xcode" ]]; then
-	# 	install_xcode
+	elif [[ "${var}" = "xcode" ]]; then
+		install_xcode
 
-	# elif [[ "${var}" = "appstore" ]]; then
-	# 	install_apps
+	elif [[ "${var}" = "appstore" ]]; then
+		install_apps
 
-	# elif [[ "${var}" = "brew" ]]; then
-	# 	install_brew
+	elif [[ "${var}" = "brew" ]]; then
+		install_brew
 
-	# elif [[ "${var}" = "dotfiles" ]] ; then
-	# 	install_dotfiles
+	elif [[ "${var}" = "dotfiles" ]] ; then
+		install_dotfiles
 
-	# elif [[ "${var}" = "all" ]]; then
-	# 	install_all
+	elif [[ "${var}" = "all" ]]; then
+		install_all
 
-	# else
-	# 	usage
+	else
+		usage
 
-	# fi
+	fi
 
-	#Totally just realised this won't work. 'getopts' only works with single character options...potentially look into using --options arg as this would be helpful for installing a brew file from a different location??
-	while getopts "fv:customise:cirrus:gpg:sublime:tower:rocket:xcode:app:brew:dot:all" opt; do
-		case $opt in
-			fv 			) 
-						check_FileVault	
-				 		exit 0
-				 		;;
-			customise 	) 
-						customise_defaults	
-				 		exit 0
-				 		;;
-			cirrus 		) 	
-						install_cirrus	
-				 		exit 0
-				 		;;
-			gpg 		) 
-						install_gpg	
-				 		exit 0
-				 		;;
-			sublime 	) 
-						install_sublime	
-				 		exit 0
-				 		;;
-			tower 		) 	
-						install_tower	
-				 		exit 0
-				 		;;
-			rocket 		) 
-						install_rocket	
-				 		exit 0
-				 		;;
-			xcode 		) install_xcode	
-				 			exit 0
-				 			;;
-			app 		) install_apps	
-				 			exit 0
-				 			;;
-			brew 		) install_brew	
-				 			exit 0
-				 			;;
-			dot 		) install_dot	
-				 			exit 0
-				 			;;
-			all 		) install_all	
-				 			exit 0
-				 			;;
-			* ) echo "Unknown flag." 
-				usage 			;;
-		esac
-	done
-
-	#Only run if anything has actually been downloaded
-	#E.g if len downloaded_dmgs != 0 then runß
 	cleanup
 
 }
