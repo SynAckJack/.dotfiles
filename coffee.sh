@@ -431,8 +431,9 @@ function install_brew {
 	# Update Bash after install through homebrew
 	#https://johndjameson.com/blog/updating-your-shell-with-homebrew/
 
-	#Add new bash to accepted shells
-	if sudo echo "/usr/local/bin/bash" >> /etc/shells ; then
+	# Run following as Sudo user
+	# https://unix.stackexchange.com/a/269080
+	if sudo bash -c "echo /usr/local/bin/bash >> /etc/shells" ; then
 		#Change shell to new bash
 		if chsh -s /usr/local/bin/bash ; then
 			echo "${PASS}|||${NC} Shell changed to Bash from homebrew"
