@@ -456,8 +456,7 @@ function main {
 
 	local var=${1:-"usage"}
 
-	if [[ Internet Connected ]]; then 
-		#Do tha code
+	#Include script to check network connection
 
 	else 
 		echo "[❌] Failed to connect to the internet"
