@@ -28,23 +28,20 @@ INFO=$(echo -en '\033[0;35m')
 
 
 function usage {
-	# shellcheck disable=SC2028
-	echo "\\nMake macOS the way it is meant to be 🤙\\n"
-	echo "Usage: "
-	echo " checkfv		- Check FileVault is enabled ⛑"
-	echo " customise		- Customise the default options of macOS 😍"
-	echo " cirrus			- Install Cirrus ☁️"
-	echo " gpgtools		- Install GPG Tools ⚙️"
-	echo " sublime		- Install Sublime Text 👨‍💻"
-	echo " tower			- Install Tower 💂‍♂️"
-	echo " rocket 		- Install Rocket 👽"
-	echo " xcode		- Install Xcode "
-	echo " brew			- Install Homebrew 🍺"
-	echo " dotfiles		- Install dotfiles 🔑"
-	echo " all 		- Install the items listed above  ❤️"
-
-	# shellcheck disable=SC2028
-	echo "\\nMake macOS the way it is meant to be 🤙\\n"
+	cat <<EOF
+		Usage:
+			audit		- Audit macOS security ⛑
+			customise	- Customise the default options of macOS 😍
+			cirrus		- Install Cirrus ☁️
+			gpgtools	- Install GPG Tools ⚙️
+			sublime		- Install Sublime Text 👨‍💻
+			tower		- Install Tower 💂‍♂️
+			rocket 		- Install Rocket 👽
+			xcode		- Install Xcode 
+			brew		- Install Homebrew 🍺
+			dotfiles	- Install dotfiles 🔑
+			all 		- Install the items listed above  ❤️
+EOF
 	exit 0
 }
 
@@ -110,6 +107,13 @@ function check_efi {
 
 	exit 0
 
+}
+
+function audit {
+
+	echo "${INFO}|||${NC} Auditing macOS..."
+
+	exit 0
 }
 
 function customise_defaults {
@@ -483,7 +487,7 @@ function install_all {
 
 	echo "${INFO}|||${NC} Installing everything ❤️ ..."
 
-	check_FileVault
+	audit_macOS
 	install_dotfiles
 	install_xcode
 	install_brew
@@ -500,8 +504,8 @@ function main {
 
 	#Include script to check network connection
 
-	if [[ "${var}" = "checkfv" ]]; then
-		check_FileVault
+	if [[ "${var}" = "audit" ]]; then
+		audit_macOS
 
 	elif [[ "${var}" = "customise" ]]; then
 		customise_defaults
