@@ -5,7 +5,9 @@ tap homebrew/core
 brew bash
 brew dcfldd
 brew gdbm
+brew libsodium
 brew mas
+brew minisign
 brew nmap
 brew openssl
 brew python
