@@ -98,16 +98,29 @@ function check_efi {
 	echo "${INFO}|||${NC} Checking EFI..."
 
 	#https://eclecticlight.co/2018/06/02/how-high-sierra-checks-your-efi-firmware/
-	if [ "$(/usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check)" ] ; then
+	if "$(/usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check)"  ; then
 		echo "${PASS}|||${NC} EFI Intergrity check passed!"
 	else
 		echo "${FAIL}|||${NC} EFI Integrity check failed!"
-		exit 1
 	fi
 
 	exit 0
 
 }
+
+function check_firmware_pwd {
+
+	echo "${INFO}|||${NC} Checking firmware password..."
+
+	if [[ "$(sudo firmwarepasswd -check | grep 'Yes')" ]] ; then
+		echo "${PASS}|||${NC} Firmware password is set!"
+	else
+		echo "${FAIL}|||${NC} Firmware password is not set"
+	fi
+
+	exit 0
+}
+
 
 function audit {
 
