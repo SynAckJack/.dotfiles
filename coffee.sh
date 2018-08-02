@@ -118,12 +118,12 @@ function check_sip {
 	fi
 }
 
-function audit {
+function audit_macOS {
 
 	echo "${INFO}|||${NC} Auditing macOS..."
 
 	if check_sudo_permission ; then
-			echo "${WARN}|||${NC} Password required to run as sudo"
+			echo "${WARN}|||${NC} Password may be required..."
 	fi
 
 	local AUDIT_PASS
@@ -139,16 +139,16 @@ function audit {
 		fi
 	done
 
-	echo "[✅] Functions that passed audit: "
+	echo "${PASS}|||${NC} Functions that passed audit: "
 	for f in "${AUDIT_PASS[@]}" ; do
 		echo "	${f}"
 	done
 
-	if [[ "${#AUDIT_FAIL[@]}" == 0 ]] ; then
+	if [[ "${#AUDIT_PASS[@]}" == "${#audit_functions[@]}" ]] ; then
 		echo "${PASS}|||${NC} Hooray! Everything passed 🎉"
 		exit 0
 	else 
-		echo "[❌] Functions that failed audit: "
+		echo "${FAIL}|||${NC} Functions that failed audit: "
 		for g in "${AUDIT_FAIL[@]}" ; do
 			echo "${g}"
 		done
@@ -301,7 +301,7 @@ function install_gpg {
 
 		#Find a way to check if script running as sudo instead of just printing this...
 		if check_sudo_permission ; then
-			echo "${WARN}|||${NC} Password required to run as sudo"
+			echo "${WARN}|||${NC} Password may be required..."
 		fi
 
 			if sudo installer -pkg "${installer_path}/Install.pkg" -target "/" >/dev/null; then
