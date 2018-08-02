@@ -102,7 +102,7 @@ function check_efi {
 
 function check_firmware_pwd {
 
-	if firmwarepasswd -check | grep -q 'Yes' ; then
+	if [ sudo bash -c "firmwarepasswd -check | grep -q 'Yes'" ] ; then
 		return 0
 	else
 		return 1
