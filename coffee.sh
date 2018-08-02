@@ -83,50 +83,78 @@ function check_sudo_permission {
 
 function check_filevault {
 
-	echo "${INFO}|||${NC} Checking if FileVault is enabled..."
-
 	if fdesetup status | grep "On" > /dev/null ; then
-		echo "${PASS}|||${NC} Filevault is turned on"
-	else 
-		echo "${FAIL}|||${NC} Filevault is turned off"
-		exit 1
+		return 0
+	else
+		return 1
 	fi
 }
 
 function check_efi {
 
-	echo "${INFO}|||${NC} Checking EFI..."
-
 	#https://eclecticlight.co/2018/06/02/how-high-sierra-checks-your-efi-firmware/
-	if "$(/usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check)"  ; then
-		echo "${PASS}|||${NC} EFI Intergrity check passed!"
+	if /usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check ; then
+		return 0
 	else
-		echo "${FAIL}|||${NC} EFI Integrity check failed!"
+		return 1
 	fi
-
-	exit 0
-
 }
 
 function check_firmware_pwd {
 
-	echo "${INFO}|||${NC} Checking firmware password..."
-
-	if [[ "$(sudo firmwarepasswd -check | grep 'Yes')" ]] ; then
-		echo "${PASS}|||${NC} Firmware password is set!"
+	if firmwarepasswd -check | grep -q 'Yes' ; then
+		return 0
 	else
-		echo "${FAIL}|||${NC} Firmware password is not set"
+		return 1
 	fi
-
-	exit 0
 }
 
+function check_sip {
+
+	if csrutil status | grep -q 'enabled' ; then
+		return 0
+	else
+		return 1
+	fi
+}
 
 function audit {
 
 	echo "${INFO}|||${NC} Auditing macOS..."
 
+	if check_sudo_permission ; then
+			echo "${WARN}|||${NC} Password required to run as sudo"
+	fi
+
+	local AUDIT_PASS
+	local AUDIT_FAIL
+
+	audit_functions=( check_filevault check_efi check_firmware_pwd check_sip )
+	
+	for f in "${audit_functions[@]}" ; do
+		if [[ "${f}" ]] ; then
+			AUDIT_PASS+=("${f}")
+		else
+			AUDIT_FAIL+=("${f}")
+		fi
+	done
+
+	echo "[✅] Functions that passed audit: "
+	for f in "${AUDIT_PASS[@]}" ; do
+		echo "	${f}"
+	done
+
+	if [[ "${#AUDIT_FAIL[@]}" == 0 ]] ; then
+		echo "${PASS}|||${NC} Hooray! Everything passed 🎉"
+		exit 0
+	else 
+		echo "[❌] Functions that failed audit: "
+		for g in "${AUDIT_FAIL[@]}" ; do
+			echo "${g}"
+		done
+	fi
 	exit 0
+
 }
 
 function customise_defaults {
