@@ -84,7 +84,7 @@ function check_sudo_permission {
   	fi
 }
 
-function check_FileVault {
+function check_filevault {
 
 	echo "${INFO}|||${NC} Checking if FileVault is enabled..."
 
