@@ -77,7 +77,7 @@ function cleanup {
 function check_sudo_permission {
 
 	if [ "$EUID" -ne 0 ]; then
-    # !! SUDO !!
+    	# NOT SUDO
     	return 0
   	else 
     	return 1
@@ -88,13 +88,28 @@ function check_FileVault {
 
 	echo "${INFO}|||${NC} Checking if FileVault is enabled..."
 
-	#if fdesetup status | grep "On" >/dev/null ; then
 	if fdesetup status | grep "On" > /dev/null ; then
 		echo "${PASS}|||${NC} Filevault is turned on"
 	else 
 		echo "${FAIL}|||${NC} Filevault is turned off"
 		exit 1
 	fi
+}
+
+function check_efi {
+
+	echo "${INFO}|||${NC} Checking EFI..."
+
+	#https://eclecticlight.co/2018/06/02/how-high-sierra-checks-your-efi-firmware/
+	if [ "$(/usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check)" ] ; then
+		echo "${PASS}|||${NC} EFI Intergrity check passed!"
+	else
+		echo "${FAIL}|||${NC} EFI Integrity check failed!"
+		exit 1
+	fi
+
+	exit 0
+
 }
 
 function customise_defaults {
