@@ -20,7 +20,7 @@ set -euo pipefail
 # -o pipefall pipelines fails on the first non-zero status code
 
 #Set colours for easy spotting of errors
-ERROR=$(echo -en '\033[0;31m')
+FAIL=$(echo -en '\033[0;31m')
 PASS=$(echo -en '\033[0;32m')
 NC=$(echo -en '\033[0m')
 WARN=$(echo -en '\033[0;33m')
@@ -90,9 +90,9 @@ function check_FileVault {
 
 	#if fdesetup status | grep "On" >/dev/null ; then
 	if fdesetup status | grep "On" > /dev/null ; then
-		echo "[✅] Filevault is turned on"
+		echo "${PASS}|||${NC} Filevault is turned on"
 	else 
-		echo "[❌] Filevault is turned off"
+		echo "${FAIL}|||${NC} Filevault is turned off"
 		exit 1
 	fi
 }
@@ -247,16 +247,16 @@ function install_gpg {
 			if sudo installer -pkg "${installer_path}/Install.pkg" -target "/" >/dev/null; then
 				echo "${PASS}|||${NC} Installed GPG Tools"
 			else 
-				echo "${ERROR}|||${NC} Failed to Install"
+				echo "${FAIL}|||${NC} Failed to Install"
 				exit 1
 			fi
 		else
-			echo "${ERROR}|||${NC} Failed to mount .dmg"
+			echo "${FAIL}|||${NC} Failed to mount .dmg"
 			exit 1
 		fi
 		echo "${PASS}|||${NC} Completed Installation"
 	else 
-		echo "${ERROR}|||${NC} Failed to verify hash"
+		echo "${FAIL}|||${NC} Failed to verify hash"
 		exit 1
 
 	fi 
@@ -286,7 +286,7 @@ function install_sublime {
 		if curl -o "${download_dmg}" "${download_url}" ; then
  			echo "${PASS}|||${NC} DOWNLOADED"
  		else
- 			echo "${ERROR}|||${NC} Download failed."
+ 			echo "${FAIL}|||${NC} Download failed."
  			exit 1
  		fi
 
@@ -309,23 +309,23 @@ function install_sublime {
 			if sudo cp -r "${installer_path}/Sublime Text.app" "/Applications" ; then
 				echo "${PASS}|||${NC} Installed Sublime Text"
 			else 
-				echo "${ERROR}|||${NC} Failed to installed Sublime Text"
+				echo "${FAIL}|||${NC} Failed to installed Sublime Text"
 				exit 1
 			fi
 		else
-			echo "${ERROR}|||${NC} Failed to mount .dmg"
+			echo "${FAIL}|||${NC} Failed to mount .dmg"
 			exit 1
 		fi
 		echo "${PASS}|||${NC} Completed Installation"
 	else
-		echo "${ERROR}|||${NC} Something went wrong. Installer is missing."
+		echo "${FAIL}|||${NC} Something went wrong. Installer is missing."
 		exit 1
 	fi
 
 	if "ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime" ; then
 		echo "${PASS}|||${NC} Symlinked Sublime to open from terminal!"
 	else
-		echo "${ERROR}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
+		echo "${FAIL}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
 	fi
 
 	cleanup "$download_dmg" "$installer_path"
@@ -431,7 +431,7 @@ function install_brew {
 	if brew file install -f "${brewFile}" ; then
 		echo "${PASS}|||${NC} Packages from Brewfile installed!"
 	else
-		echo "${ERROR}|||${NC} Packages failed to install"
+		echo "${FAIL}|||${NC} Packages failed to install"
 		exit 1
 	fi
 
@@ -449,7 +449,7 @@ function install_brew {
 		if chsh -s /usr/local/bin/bash ; then
 			echo "${PASS}|||${NC} Shell changed to Bash from homebrew"
 		else
-			echo "${ERROR}|||${NC} Failed to change shell to new Bash"
+			echo "${FAIL}|||${NC} Failed to change shell to new Bash"
 			exit 1
 		fi
 	fi
