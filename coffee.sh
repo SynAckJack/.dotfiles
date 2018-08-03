@@ -93,7 +93,7 @@ function check_filevault {
 function check_efi {
 
 	#https://eclecticlight.co/2018/06/02/how-high-sierra-checks-your-efi-firmware/
-	if /usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check ; then
+	if /usr/libexec/firmwarecheckers/eficheck/eficheck --integrity-check > /dev/null ; then
 		return 0
 	else
 		return 1
@@ -102,7 +102,7 @@ function check_efi {
 
 function check_firmware_pwd {
 
-	if [ sudo bash -c "firmwarepasswd -check | grep -q 'Yes'" ] ; then
+	if sudo firmwarepasswd -check | grep -q 'Yes' ; then
 		return 0
 	else
 		return 1
@@ -132,7 +132,7 @@ function audit_macOS {
 	audit_functions=( check_filevault check_efi check_firmware_pwd check_sip )
 	
 	for f in "${audit_functions[@]}" ; do
-		if [[ "${f}" ]] ; then
+		if "${f}" ; then
 			AUDIT_PASS+=("${f}")
 		else
 			AUDIT_FAIL+=("${f}")
