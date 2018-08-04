@@ -334,63 +334,68 @@ function install_sublime {
 	local download_url
 	local download_dmg
 
-	download_url="$(curl -s "https://www.sublimetext.com" | grep ".dmg" | awk -F '"' '{ print $4 }')"
+	if ! [ -d "/Applications/Sublime Text.app" ] ; then
+		download_url="$(curl -s "https://www.sublimetext.com" | grep ".dmg" | awk -F '"' '{ print $4 }')"
 
-	echo "$download_url"
+		echo "$download_url"
 
-	download_dmg="$(echo "$download_url" | awk -F "/" '{ print $4 }')"
+		download_dmg="$(echo "$download_url" | awk -F "/" '{ print $4 }')"
 
-	echo "$download_dmg"
+		echo "$download_dmg"
 
-	if ! [ -f "${download_dmg}" ] ; then
+		if ! [ -f "${download_dmg}" ] ; then
 
-		#No need for shasum as there is none available on the website
-		if curl -o "${download_dmg}" "${download_url}" ; then
- 			echo "${PASS}|||${NC} DOWNLOADED"
- 		else
- 			echo "${FAIL}|||${NC} Download failed."
- 			exit 1
- 		fi
+			#No need for shasum as there is none available on the website
+			if curl -o "${download_dmg}" "${download_url}" ; then
+	 			echo "${PASS}|||${NC} Downloaded ${download_dmg}"
+	 		else
+	 			echo "${FAIL}|||${NC} Download failed."
+	 			exit 1
+	 		fi
 
-	else 
-		echo "${PASS}|||${NC} ALREADY DOWNLOADED"
-	fi
-
-	if [ -f "${download_dmg}" ] ; then
-
-		installer_path="/Volumes/Sublime Text"
-
-		if hdiutil attach -quiet "$download_dmg" ; then
-		echo "${PASS}|||${NC} Mounted installer"
-
-		#Find a way to check if script running as sudo instead of just printing this...
-		if check_sudo_permission ; then
-			echo "${WARN}|||${NC} Password required to run as sudo"
+		else 
+			echo "${PASS}|||${NC} Already downloaded ${download_dmg}"
 		fi
 
-			if sudo cp -r "${installer_path}/Sublime Text.app" "/Applications" ; then
-				echo "${PASS}|||${NC} Installed Sublime Text"
-			else 
-				echo "${FAIL}|||${NC} Failed to installed Sublime Text"
+		if [ -f "${download_dmg}" ] ; then
+
+			installer_path="/Volumes/Sublime Text"
+
+			if hdiutil attach -quiet "$download_dmg" ; then
+			echo "${PASS}|||${NC} Mounted installer"
+
+			#Find a way to check if script running as sudo instead of just printing this...
+			if check_sudo_permission ; then
+				echo "${WARN}|||${NC} Password required to run as sudo"
+			fi
+
+				if sudo cp -r "${installer_path}/Sublime Text.app" "/Applications" ; then
+					echo "${PASS}|||${NC} Installed Sublime Text"
+				else 
+					echo "${FAIL}|||${NC} Failed to installed Sublime Text"
+					exit 1
+				fi
+			else
+				echo "${FAIL}|||${NC} Failed to mount .dmg"
 				exit 1
 			fi
+			echo "${PASS}|||${NC} Completed Installation"
 		else
-			echo "${FAIL}|||${NC} Failed to mount .dmg"
+			echo "${FAIL}|||${NC} Something went wrong. Installer is missing."
 			exit 1
 		fi
-		echo "${PASS}|||${NC} Completed Installation"
-	else
-		echo "${FAIL}|||${NC} Something went wrong. Installer is missing."
-		exit 1
-	fi
 
-	if "ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime" ; then
-		echo "${PASS}|||${NC} Symlinked Sublime to open from terminal!"
-	else
-		echo "${FAIL}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
-	fi
+		if "ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime" ; then
+			echo "${PASS}|||${NC} Symlinked Sublime to open from terminal!"
+		else
+			echo "${FAIL}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
+		fi
 
-	cleanup "$download_dmg" "$installer_path"
+		cleanup "$download_dmg" "$installer_path"
+	else
+		echo "${PASS}|||${NC} Sublime Text already installed"
+fi
+
 
 	exit 0
 }
