@@ -28,19 +28,19 @@ INFO=$(echo -en '\033[0;35m')
 
 
 function usage {
-	cat <<EOF
-		Usage:
-			audit		- Audit macOS security ⛑
-			customise	- Customise the default options of macOS 😍
-			cirrus		- Install Cirrus ☁️
-			gpgtools	- Install GPG Tools ⚙️
-			sublime		- Install Sublime Text 👨‍💻
-			tower		- Install Tower 💂‍♂️
-			rocket 		- Install Rocket 👽
-			xcode		- Install Xcode 
-			brew		- Install Homebrew 🍺
-			dotfiles	- Install dotfiles 🔑
-			all 		- Install the items listed above  ❤️
+cat <<EOF
+Usage:
+	audit		- Audit macOS security ⛑
+	customise	- Customise the default options of macOS 😍
+	cirrus		- Install Cirrus ☁️
+	gpgtools	- Install GPG Tools ⚙️
+	sublime		- Install Sublime Text 👨‍💻
+	tower		- Install Tower 💂‍♂️
+	rocket 		- Install Rocket 👽
+	xcode		- Install Xcode 
+	brew		- Install Homebrew 🍺
+	dotfiles	- Install dotfiles 🔑
+	all 		- Install the items listed above  ❤️
 EOF
 	exit 0
 }
@@ -119,6 +119,8 @@ function check_sip {
 }
 
 function audit_macOS {
+
+	#TODO: Check GateKeeper enabled
 
 	echo "${INFO}|||${NC} Auditing macOS..."
 
@@ -543,7 +545,16 @@ function main {
 
 	local var=${1:-"usage"}
 
-	#Include script to check network connection
+	if [ "$#" -ne 0 ] ; then
+		#No point checking connection if no args passed
+		echo "${INFO}|||${NC} Checking internet connection!"
+		if ping -c 4 8.8.8.8 | grep 'No route' ; then
+			echo "${FAIL}|||${NC} No internet connection. Exiting..."
+			exit 1
+		else
+			echo "${PASS}|||${NC} Internet connected"
+		fi
+	fi
 
 	if [[ "${var}" = "audit" ]]; then
 		audit_macOS
