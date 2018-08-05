@@ -36,7 +36,6 @@ Usage:
 	gpgtools	- Install GPG Tools ⚙️
 	sublime		- Install Sublime Text 👨‍💻
 	tower		- Install Tower 💂‍♂️
-	rocket 		- Install Rocket 👽
 	xcode		- Install Xcode 
 	brew		- Install Homebrew 🍺
 	dotfiles	- Install dotfiles 🔑
@@ -442,13 +441,6 @@ function install_tower {
 	exit 0
 }
 
-function install_rocket {
-
-	echo "${INFO}|||${NC} Installing Rocket..."
-
-	exit 0
-}
-
 function install_xcode {
 
 	echo "${INFO}|||${NC} Installing Xcode..."
@@ -541,7 +533,6 @@ function install_all {
 	install_brew
 	install_gpg
 	install_tower
-	install_rocket
 	customise_defaults
 	exit 0
 }
@@ -578,9 +569,6 @@ function main {
 
 	elif [[ "${var}" = "tower" ]]; then
 		install_tower
-
-	elif [[ "${var}" = "rocket" ]]; then
-		install_rocket
 
 	elif [[ "${var}" = "xcode" ]]; then
 		install_xcode
