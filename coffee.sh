@@ -78,6 +78,17 @@ function check_sudo_permission {
   	fi
 }
 
+function check_firewall {
+
+	firewall="$(defaults read /Library/Preferences/com.apple.alf globalstate)"
+
+	if [[ "${firewall}" -ge 1 ]] ; then
+		return 0
+	else 
+		return 1
+	fi
+}
+
 function check_filevault {
 
 	if fdesetup status | grep "On" > /dev/null ; then
@@ -128,7 +139,7 @@ function audit_macOS {
 	local AUDIT_PASS
 	local AUDIT_FAIL
 
-	audit_functions=( check_filevault check_efi check_firmware_pwd check_sip )
+	audit_functions=( check_filevault check_efi check_firmware_pwd check_sip check_firewall)
 	
 	for f in "${audit_functions[@]}" ; do
 		if "${f}" ; then
