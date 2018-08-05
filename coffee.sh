@@ -89,6 +89,17 @@ function check_firewall {
 	fi
 }
 
+function check_stealth_firewall {
+
+	stealth="$(defaults read /Library/Preferences/com.apple.alf stealthenabled)"
+
+	if [[ "${stealth}" -eq 1 ]] ; then
+		return 0
+	else 
+		return 1
+	fi
+}
+
 function check_filevault {
 
 	if fdesetup status | grep "On" > /dev/null ; then
@@ -139,7 +150,7 @@ function audit_macOS {
 	local AUDIT_PASS
 	local AUDIT_FAIL
 
-	audit_functions=( check_filevault check_efi check_firmware_pwd check_sip check_firewall)
+	audit_functions=( check_filevault check_efi check_firmware_pwd check_sip check_firewall check_stealth_firewall)
 	
 	for f in "${audit_functions[@]}" ; do
 		if "${f}" ; then
