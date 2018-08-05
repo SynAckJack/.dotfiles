@@ -8,8 +8,6 @@
 #	- add function to verify signature of applications before install
 #	- checksum function for applications that have checksums online, again 
 #	  instead of being repeated in functions
-#	- add function to check if running with sudo
-
 
 #Inspired from 0xmachos bittersweet.sh
 #Tested on macOS 10.13, 10.14 beta w/ MacBook Pro 2016
