@@ -30,7 +30,7 @@ cat <<EOF
 Usage:
 	audit		- Audit macOS security ⛑
 	customise	- Customise the default options of macOS 😍
-	cirrus		- Install Cirrus ☁️
+	bailiff		- Install Bailiff ☁️
 	gpgtools	- Install GPG Tools ⚙️
 	sublime		- Install Sublime Text 👨‍💻
 	tower		- Install Tower 💂‍♂️
@@ -276,9 +276,9 @@ function customise_defaults {
 	exit 0
 }
 
-function install_cirrus {
+function install_bailiff {
 
-	echo "${INFO}|||${NC} Installing Cirruss..."
+	echo "${INFO}|||${NC} Installing Bailiff..."
 
 	exit 0
 }
@@ -553,6 +553,7 @@ function install_all {
 	install_brew
 	install_gpg
 	install_tower
+	install_bailiff
 	customise_defaults
 	exit 0
 }
@@ -578,8 +579,8 @@ function main {
 	elif [[ "${var}" = "customise" ]]; then
 		customise_defaults
 
-	elif [[ "${var}" = "cirrus" ]]; then
-		install_cirrus
+	elif [[ "${var}" = "bailiff" ]]; then
+		install_bailiff
 
 	elif [[ "${var}" = "gpgtools" ]]; then
 		install_gpg
