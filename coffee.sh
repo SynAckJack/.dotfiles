@@ -614,5 +614,8 @@ function main {
 
 main "$@"
 
+#TODO:
+# - Install BlockBlock, Lulu, Do Not Disturb and What's Your Sign Applications
+# List above may change, recently started using them so who knows...
 
 
