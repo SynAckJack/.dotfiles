@@ -26,20 +26,20 @@ INFO=$(echo -en '\033[0;35m')
 
 
 function usage {
-cat <<EOF
-Usage:
-	audit		- Audit macOS security ⛑
-	customise	- Customise the default options of macOS 😍
-	bailiff		- Install Bailiff ☁️
-	gpgtools	- Install GPG Tools ⚙️
-	sublime		- Install Sublime Text 👨‍💻
-	tower		- Install Tower 💂‍♂️
-	xcode		- Install Xcode 
-	brew		- Install Homebrew 🍺
-	dotfiles	- Install dotfiles 🔑
-	all 		- Install the items listed above  ❤️
+	cat << EOF
+	Usage:
+		audit		- Audit macOS security ⛑
+		customise	- Customise the default options of macOS 😍
+		bailiff		- Install Bailiff ☁️
+		gpgtools	- Install GPG Tools ⚙️
+		sublime		- Install Sublime Text 👨‍💻
+		tower		- Install Tower 💂‍♂️
+		xcode		- Install Xcode 
+		brew		- Install Homebrew 🍺
+		dotfiles	- Install dotfiles 🔑
+		all 		- Install the items listed above  ❤️
 EOF
-	exit 0
+		exit 0
 }
 
 function cleanup {
@@ -223,10 +223,16 @@ function customise_defaults {
 
 
 	#WORK IN PROGRESS --------------
-	#Set dark mode
-	#defaults write .GlobalPreferences AppleInterfaceTheme -string "Dark"
-
-
+	#'set dark mode to false' to set to light mode
+	
+	osascript << EOF
+	    tell application "System Events"
+	    	tell appearance preferences
+	    		set dark mode to true
+	    	end tell
+	    end tell
+EOF
+	
 	#Show all hidden files in Finder
 	#default: defautls write com.apple.Finder AppleShowAllFiles -bool false
 	defautls write com.apple.Finder AppleShowAllFiles -bool true
