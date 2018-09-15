@@ -3,7 +3,9 @@
 
 tap homebrew/core
 brew bash
+brew binutils
 brew dcfldd
+brew gdb
 brew gdbm
 brew libsodium
 brew mas
