@@ -1,7 +1,7 @@
 [user]
 	name = SynAckJack
 	email = jackclark340@gmail.com
-	signingkey = 0xD92E95543371CB1F
+	signingkey = 0x245E45834A9D2F9B
 
 [commit]
 	gpgsign = true

@@ -1,14 +1,8 @@
 #!/usr/bin/env bash
 #~/.bash_profile
 
-export IDF_PATH="$HOME/esp/esp-idf"
-export PATH="$PATH:$HOME/esp/xtensa-esp32-elf/bin"
-
-#Link to /Users/jackclark/scripts for use with bash development
-export PATH="$HOME/scripts/:$PATH"
-
-#Working with BLE-CTF
-alias get_esp32='$HOME/esp/xtensa-esp32-elf/bin'
+#Temporarily added for use with HTB
+export PATH="/usr/local/Cellar/openvpn/2.4.6/sbin:$PATH"
 
 #Load .files
 #Based on 0xmachos/dotfiles/.bash_prompt
