@@ -477,7 +477,7 @@ function install_xcode {
 
 function install_brew {
 
-	echo "${INFO}|||${NC} Installing Homebrew..."
+	echo "${INFO}|||${NC} Installing Homebrew...🍻"
 
 	if ! [[ "$(command -v brew)" > /dev/null ]] ; then
 		# shellcheck disable=SC2057
