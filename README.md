@@ -6,17 +6,16 @@ usage:
 
 	./coffee.sh []
 	
-	checkfv		  - Check FileVault is enabled
-	customise	  - Customise the defaults of macOS
-	cirrus		  - Install Cirrus
-	gpgtools	  - Install GPG Tools
-	sublime		  - Install Sublime Text
-	tower             - Install Tower
-	rocket 		  - Install Rocket
-	xcode		  - Install Xcode
-	brew		  - Install Homebrew
-	dotfiles	  - Install dotfiles
-  	all 		  - Install the items listed above
+	audit		- Audit macOS security ⛑
+	customise	- Customise the default options of macOS 😍
+	bailiff		- Install Bailiff ☁️
+	gpgtools	- Install GPG Tools ⚙️
+	sublime		- Install Sublime Text 👨‍💻
+	tower		- Install Tower 💂‍♂️
+	xcode		- Install Xcode 
+	brew		- Install Homebrew 🍺
+	dotfiles	- Install dotfiles 🔑
+	all 		- Install the items listed above  ❤️
 ```
 
 ## notes
