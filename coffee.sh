@@ -18,11 +18,11 @@ set -euo pipefail
 # -o pipefall pipelines fails on the first non-zero status code
 
 #Set colours for easy spotting of errors
-FAIL=$(echo -en '\033[0;31m')
-PASS=$(echo -en '\033[0;32m')
+FAIL=$(echo -en '\033[01;31m')
+PASS=$(echo -en '\033[01;32m')
 NC=$(echo -en '\033[0m')
-WARN=$(echo -en '\033[0;33m')
-INFO=$(echo -en '\033[0;35m')
+WARN=$(echo -en '\033[1;33m')
+INFO=$(echo -en '\033[01;35m')
 
 
 function usage {
@@ -45,24 +45,24 @@ EOF
 function cleanup {
 
 	#Unmounting and deleting any installers that were mounted or downloaded
-	echo "${INFO}|||${NC} Starting Cleanup"
+	echo "${INFO}Starting Cleanup${NC}"
 	local download_dmg
 	local installer
 
 	download_dmg=${1:?download_dmg not passed to cleanup}
 	installer=${2:?installer not passed to cleanup}
 
-	echo "${INFO}|||${NC} Deleting ${download_dmg}"
+	echo "${INFO}Deleting ${download_dmg}${NC}"
 	rm -r "${download_dmg}"
 
 	if [ -f "${installer}" ] ; then
 		if 	echo "${installer}" | grep ".zip" ; then
 
-			echo "${INFO}|||${NC} Deleting ${installer}"
+			echo "${INFO}Deleting ${installer}${NC}"
 			rm -rf "${installer}"
 		else 
 
-			echo "${INFO}|||${NC} Unmounting from ${installer}"
+			echo "${INFO}Unmounting from ${installer}${NC}"
 			hdiutil detach -quiet "${installer}"
 		fi
 	fi
@@ -141,10 +141,10 @@ function audit_macOS {
 
 	#TODO: Check GateKeeper enabled
 
-	echo "${INFO}|||${NC} Auditing macOS..."
+	echo "${INFO}Auditing macOS...${NC}"
 
 	if check_sudo_permission ; then
-			echo "${WARN}|||${NC} Password may be required..."
+			echo "${WARN}Password may be required...${NC}"
 	fi
 
 	local AUDIT_PASS
@@ -160,18 +160,18 @@ function audit_macOS {
 		fi
 	done
 
-	echo "${PASS}|||${NC} Functions that passed audit: "
+	echo "${PASS}Functions that passed audit: ${NC}"
 	for f in "${AUDIT_PASS[@]}" ; do
 		echo "	${f}"
 	done
 
 	if [[ "${#AUDIT_PASS[@]}" == "${#audit_functions[@]}" ]] ; then
-		echo "${PASS}|||${NC} Hooray! Everything passed 🎉"
+		echo "${PASS}Hooray! Everything passed${NC} 🎉"
 		exit 0
 	else 
-		echo "${FAIL}|||${NC} Functions that failed audit: "
+		echo "${FAIL}Functions that failed audit:${NC}"
 		for g in "${AUDIT_FAIL[@]}" ; do
-			echo "${g}"
+			echo "	${g}"
 		done
 	fi
 	exit 0
@@ -284,7 +284,7 @@ EOF
 
 function install_bailiff {
 
-	echo "${INFO}|||${NC} Installing Bailiff..."
+	echo "${INFO}Installing Bailiff...${NC}"
 
 	exit 0
 }
@@ -295,7 +295,7 @@ function install_gpg {
 	local hash 
 	local installer_path
 
-	echo "${INFO}|||${NC} Installing GPG Tools..."
+	echo "${INFO}Installing GPG Tools...${NC}"
 	#Get latest version of GPGTools from the GPGTools home page (work something more reliable out for this)
 	download="$(curl -s "https://gpgtools.org" | grep "version" | awk -F "/" '{ print $4 }')"
 
@@ -303,13 +303,13 @@ function install_gpg {
 
 	if [ -f "${download_dmg}" ] ; then
 
-		echo "${PASS}|||${NC} ALREADY DOWNLOADED"
+		echo "${PASS}ALREADY DOWNLOADED${NC}"
 		#Not needed as hash is calculated in if statement later
 		#local download_hash="$(shasum -a 256 "${download_dmg}")"
 
 	elif curl -o "${download_dmg}" "https://releases.gpgtools.org/${download_dmg}"; then
 	 	
-	 	echo "${PASS}|||${NC} DOWNLOADED"
+	 	echo "${PASS}DOWNLOADED${NC}"
 	 	
 	fi
 
@@ -319,31 +319,31 @@ function install_gpg {
 	#Compare hashes of download to hash online
 	if [[ "$(shasum -a 256 "$download_dmg")" = "$hash"* ]]; then
 
-		echo "${PASS}|||${NC} Hash verified"
+		echo "${PASS}Hash verified${NC}"
 
 		installer_path="/Volumes/GPG Suite"
 
 		if hdiutil attach -quiet "$download_dmg" ; then
-		echo "${PASS}|||${NC} Mounted installer"
+		echo "${PASS}Mounted installer${NC}"
 
 		#Find a way to check if script running as sudo instead of just printing this...
 		if check_sudo_permission ; then
-			echo "${WARN}|||${NC} Password may be required..."
+			echo "${WARN}Password may be required...${NC}"
 		fi
 
 			if sudo installer -pkg "${installer_path}/Install.pkg" -target "/" >/dev/null; then
-				echo "${PASS}|||${NC} Installed GPG Tools"
+				echo "${PASS}Installed GPG Tools${NC}"
 			else 
-				echo "${FAIL}|||${NC} Failed to Install"
+				echo "${FAIL}Failed to Install${NC}"
 				exit 1
 			fi
 		else
-			echo "${FAIL}|||${NC} Failed to mount .dmg"
+			echo "${FAIL}Failed to mount .dmg${NC}"
 			exit 1
 		fi
-		echo "${PASS}|||${NC} Completed Installation"
+		echo "${PASS}Completed Installation${NC}"
 	else 
-		echo "${FAIL}|||${NC} Failed to verify hash"
+		echo "${FAIL}Failed to verify hash${NC}"
 		exit 1
 
 	fi 
@@ -355,7 +355,7 @@ function install_gpg {
 
 function install_sublime {
 
-	echo "${INFO}|||${NC} Installing Sublime Text..."
+	echo "${INFO}Installing Sublime Text...${NC}"
 	local download_url
 	local download_dmg
 
@@ -372,14 +372,14 @@ function install_sublime {
 
 			#No need for shasum as there is none available on the website
 			if curl -o "${download_dmg}" "${download_url}" ; then
-	 			echo "${PASS}|||${NC} Downloaded ${download_dmg}"
+	 			echo "${PASS}Downloaded ${download_dmg}${NC}"
 	 		else
-	 			echo "${FAIL}|||${NC} Download failed."
+	 			echo "${FAIL}Download failed...${NC}"
 	 			exit 1
 	 		fi
 
 		else 
-			echo "${PASS}|||${NC} Already downloaded ${download_dmg}"
+			echo "${PASS}Already downloaded ${download_dmg}${NC}"
 		fi
 
 		if [ -f "${download_dmg}" ] ; then
@@ -387,38 +387,38 @@ function install_sublime {
 			installer_path="/Volumes/Sublime Text"
 
 			if hdiutil attach -quiet "$download_dmg" ; then
-			echo "${PASS}|||${NC} Mounted installer"
+			echo "${PASS}Mounted installer${NC}"
 
 			#Find a way to check if script running as sudo instead of just printing this...
 			if check_sudo_permission ; then
-				echo "${WARN}|||${NC} Password required to run as sudo"
+				echo "${WARN}Password required to run as sudo${NC}"
 			fi
 
 				if sudo cp -r "${installer_path}/Sublime Text.app" "/Applications" ; then
-					echo "${PASS}|||${NC} Installed Sublime Text"
+					echo "${PASS}Installed Sublime Text${NC}"
 				else 
-					echo "${FAIL}|||${NC} Failed to installed Sublime Text"
+					echo "${FAIL}Failed to installed Sublime Text${NC}"
 					exit 1
 				fi
 			else
-				echo "${FAIL}|||${NC} Failed to mount .dmg"
+				echo "${FAIL}Failed to mount .dmg${NC}"
 				exit 1
 			fi
-			echo "${PASS}|||${NC} Completed Installation"
+			echo "${PASS}Completed Installation${NC}"
 		else
-			echo "${FAIL}|||${NC} Something went wrong. Installer is missing."
+			echo "${FAIL}Something went wrong. Installer is missing.${NC}"
 			exit 1
 		fi
 
 		if "ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/sublime" ; then
-			echo "${PASS}|||${NC} Symlinked Sublime to open from terminal!"
+			echo "${PASS} Symlinked Sublime to open from terminal!${NC}"
 		else
-			echo "${FAIL}|||${NC} Failed to symlink Sublime, so it won't open from terminal..."
+			echo "${FAIL} Failed to symlink Sublime, so it won't open from terminal...${NC}"
 		fi
 
 		cleanup "$download_dmg" "$installer_path"
 	else
-		echo "${PASS}|||${NC} Sublime Text already installed"
+		echo "${PASS}Sublime Text already installed${NC}"
 fi
 
 
@@ -445,7 +445,7 @@ function install_tower {
 			echo "Unzipped $download_zip"
 
 			if check_sudo_permission ; then
-				echo "${WARN}|||${NC} Password required to run as sudo"
+				echo "${WARN}Password required to run as sudo${NC}"
 			fi
 
 			if sudo cp -r "Tower.app" "/Applications" ; then
@@ -469,7 +469,7 @@ function install_tower {
 
 function install_xcode {
 
-	echo "${INFO}|||${NC} Installing Xcode..."
+	echo "${INFO}Installing Xcode...${NC}"
 
 	exit 0
 }
@@ -477,14 +477,14 @@ function install_xcode {
 
 function install_brew {
 
-	echo "${INFO}|||${NC} Installing Homebrew...🍻"
+	echo "${INFO}Installing Homebrew...${NC}🍻"
 
 	if ! [[ "$(command -v brew)" > /dev/null ]] ; then
 		# shellcheck disable=SC2057
 		if /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ; then
 			echo "Homebrew installed!"
 		else
-			echo "Failed to installe Homebrew..."
+			echo "Failed to install Homebrew..."
 			exit 1
 		fi
 	else
@@ -510,18 +510,18 @@ function install_brew {
 	local brewFile="./Brewfile"
 
 	if check_sudo_permission ; then
-		echo "${WARN}|||${NC} Password required to run as sudo"
+		echo "${WARN}Password required to run as sudo${NC}"
 	fi
 
 	if brew file install -f "${brewFile}" ; then
-		echo "${PASS}|||${NC} Packages from Brewfile installed!"
+		echo "${PASS}Packages from Brewfile installed!${NC}"
 	else
-		echo "${FAIL}|||${NC} Packages failed to install"
+		echo "${FAIL}Packages failed to install${NC}"
 		exit 1
 	fi
 
 	if check_sudo_permission ; then
-		echo "${WARN}|||${NC} Password required to run as sudo"
+		echo "${WARN}Password required to run as sudo${NC}"
 	fi
 
 	# Update Bash after install through homebrew
@@ -532,9 +532,9 @@ function install_brew {
 	if sudo bash -c "echo /usr/local/bin/bash >> /etc/shells" ; then
 		#Change shell to new bash
 		if chsh -s /usr/local/bin/bash ; then
-			echo "${PASS}|||${NC} Shell changed to Bash from homebrew"
+			echo "${PASS}Shell changed to Bash from homebrew${NC}"
 		else
-			echo "${FAIL}|||${NC} Failed to change shell to new Bash"
+			echo "${FAIL}Failed to change shell to new Bash${NC}"
 			exit 1
 		fi
 	fi
@@ -544,14 +544,14 @@ function install_brew {
 
 function install_dotfiles {
 
-	echo "${INFO}|||${NC} Installing dotfiles..."
+	echo "${INFO}Installing dotfiles...${NC}"
 
 	exit 0
 }
 
 function install_all {
 
-	echo "${INFO}|||${NC} Installing everything ❤️ ..."
+	echo "${INFO}Installing everything ${NC}❤️{INFO}...${NC}"
 
 	audit_macOS
 	install_dotfiles
@@ -570,12 +570,12 @@ function main {
 
 	if [ "$#" -ne 0 ] ; then
 		#No point checking connection if no args passed
-		echo "${INFO}|||${NC} Checking internet connection!"
+		echo "${INFO}Checking internet connection!${NC}"
 		if ping -c 4 8.8.8.8 | grep 'No route' ; then
-			echo "${FAIL}|||${NC} No internet connection. Exiting..."
+			echo "${FAIL}No internet connection. Exiting...${NC}"
 			exit 1
 		else
-			echo "${PASS}|||${NC} Internet connected"
+			echo "${PASS}Internet connected${NC}"
 		fi
 	fi
 
