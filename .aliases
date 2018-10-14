@@ -16,4 +16,4 @@ alias edit='sublime'
 alias open='open -a Finder ./' 
 
 # Make and change directory at once
-alias mkcd='_(){ mkdir -p $1; cd $1; }; _'
+mkcd() { mkdir -p $1; cd $1; };
