@@ -579,6 +579,15 @@ function main {
 		fi
 	fi
 
+	echo "${WARN}Checking if Xcode Tools are installed. If not, an Apple ID will be required. ${NC}"
+
+    if [[ "$(xcode-select -v | grep "version")" ]] ; then
+		echo "${PASS}Xcode Tools installed successfully${NC}"
+	else
+		echo "${FAIL}Xcode Tools failed to install...${NC}"
+		exit 1
+	fi
+
 	if [[ "${var}" = "audit" ]]; then
 		audit_macOS
 
