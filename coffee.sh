@@ -180,7 +180,7 @@ function audit_macOS {
 
 function customise_defaults {
 
-	echo "${INFO}|||${NC} Customising the defaults..."
+	echo "${INFO}Customising the defaults...{NC}"
 
 	#Disable Guest User
 	#default: sudo defaults write /Library/Preferences/com.apple.AppleFileServer guestAccess -bool true
