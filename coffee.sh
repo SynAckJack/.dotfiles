@@ -180,7 +180,7 @@ function audit_macOS {
 
 function customise_defaults {
 
-	echo "${INFO}|||${NC} Customising the defaults..."
+	echo "${INFO}Customising the defaults...{NC}"
 
 	#Disable Guest User
 	#default: sudo defaults write /Library/Preferences/com.apple.AppleFileServer guestAccess -bool true
@@ -362,11 +362,7 @@ function install_sublime {
 	if ! [ -d "/Applications/Sublime Text.app" ] ; then
 		download_url="$(curl -s "https://www.sublimetext.com" | grep ".dmg" | awk -F '"' '{ print $4 }')"
 
-		echo "$download_url"
-
 		download_dmg="$(echo "$download_url" | awk -F "/" '{ print $4 }')"
-
-		echo "$download_dmg"
 
 		if ! [ -f "${download_dmg}" ] ; then
 
@@ -405,22 +401,20 @@ function install_sublime {
 				exit 1
 			fi
 			echo "${PASS}Completed Installation${NC}"
-		else
-			echo "${FAIL}Something went wrong. Installer is missing.${NC}"
-			exit 1
-		fi
+			else
+				echo "${FAIL}Something went wrong. Installer is missing.${NC}"
+				exit 1
+			fi
 
-		if ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" "/usr/local/bin/sublime" ; then
+			if ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" "/usr/local/bin/sublime" ; then
 			echo "${PASS} Symlinked Sublime to open from terminal!${NC}"
+			else
+				echo "${FAIL} Failed to symlink Sublime, so it won't open from terminal...${NC}"
+			fi
+			cleanup "$download_dmg" "$installer_path"
 		else
-			echo "${FAIL} Failed to symlink Sublime, so it won't open from terminal...${NC}"
-		fi
-
-		cleanup "$download_dmg" "$installer_path"
-	else
-		echo "${PASS}Sublime Text already installed${NC}"
-fi
-
+			echo "${PASS}Sublime Text already installed${NC}"
+	fi
 
 	exit 0
 }
@@ -435,31 +429,31 @@ function install_tower {
 
 
 		if curl -o "$download_zip" "$download_url" ; then
-			echo "DOWNLOADED"
+			echo "${PASS}Downloaded ${download_zip}${NC}"
 		else
-			echo "FAILED"
+			echo "${FAIL}Failed to download ${download_zip}{NC}"
 			exit 1
 		fi
 
 		if unzip -q "$download_zip" -d "." ; then
-			echo "Unzipped $download_zip"
+			echo "${INFO}Unzipped ${download_zip}${NC}"
 
 			if check_sudo_permission ; then
 				echo "${WARN}Password required to run as sudo${NC}"
 			fi
 
 			if sudo cp -r "Tower.app" "/Applications" ; then
-				echo "Installed Tower in Applications!"
+				echo "${PASS}Installed Tower in Applications!${NC}"
 			else
-				echo "Failed to copy to /Applications. Running as sudo?!"
+				echo "${FAIL}Failed to copy to /Applications. Running as sudo?!${NC}"
 				exit 1
 			fi
 		else
-			echo "Failed to unzip."
+			echo "${FAIL}Failed to unzip.${NC}"
 			exit 1
 		fi
 	else
-		echo "Tower is already installed!"
+		echo "${PASS}Tower is already installed!${NC}"
 		exit 0
 	fi
 
@@ -484,26 +478,26 @@ function install_brew {
 		if /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" ; then
 			echo "Homebrew installed!"
 		else
-			echo "Failed to install Homebrew..."
+			echo "${FAIL}Failed to install Homebrew...${NC}"
 			exit 1
 		fi
 	else
-		echo "Homebrew already installed!"
+		echo "${PASS}Homebrew already installed!${NC}"
 		brew update
 		brew upgrade
 	fi
 
 	if ! [[ "$(command -v brew-file)" > /dev/null ]] ; then
-		echo "Installing brew-file"
+		echo "${PASS}Installing brew-file${NC}"
 
 		if brew install rcmdnk/file/brew-file ; then
-			echo "brew-file installed"
+			echo "${PASS}brew-file installed${NC}"
 		else
-			echo "Failed to install brew-file"
+			echo "${FAIL}Failed to install brew-file${NC}"
 			exit 1
 		fi
 	else
-		echo "brew-file already installed"
+		echo "${PASS}brew-file already installed${NC}"
 	fi
 
 	#At a later date, this will be changed to either be assigned from the command line or by default this repo path
