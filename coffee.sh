@@ -362,11 +362,7 @@ function install_sublime {
 	if ! [ -d "/Applications/Sublime Text.app" ] ; then
 		download_url="$(curl -s "https://www.sublimetext.com" | grep ".dmg" | awk -F '"' '{ print $4 }')"
 
-		echo "$download_url"
-
 		download_dmg="$(echo "$download_url" | awk -F "/" '{ print $4 }')"
-
-		echo "$download_dmg"
 
 		if ! [ -f "${download_dmg}" ] ; then
 
