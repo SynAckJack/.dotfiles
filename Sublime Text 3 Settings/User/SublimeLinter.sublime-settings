@@ -1,0 +1,14 @@
+// SublimeLinter Settings - User
+{
+	"linters": {
+		"rust": {
+	            "@disable": false,
+	            "args": [],
+	            "crate-root": null,
+	            "excludes": [],
+	            "use-cargo": true,
+	            "use-cargo-check": true,
+	            "use-crate-root": false
+	        }
+    }
+}
