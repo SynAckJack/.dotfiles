@@ -5,3 +5,5 @@
 #dump* files for development of functions
 dump*
 dump-
+/.bash_prompt backup.txt
+/.bash_prompt2
