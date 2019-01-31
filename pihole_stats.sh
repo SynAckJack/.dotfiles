@@ -6,6 +6,7 @@
 set -euo pipefail
 
 if [ "$(curl -s "http://pi.hole/admin/api.php")" ] ; then
+	
 	echo "[✅] - Pi-hole reachable"
 	echo "[✅] - Retrieving stats"
 
