@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-#~/.bash_prompt
-
-
-#Very basic prompt...
-export PS1="jack:\w$ "

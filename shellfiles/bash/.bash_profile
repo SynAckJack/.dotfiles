@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 #~/.bash_profile
 
-#Temporarily added for use with HTB
-export PATH="/usr/local/Cellar/openvpn/2.4.6/sbin:$PATH"
-
 #Load .files
 #Based on 0xmachos/dotfiles/.bash_prompt
 for file in ~/.{bash_prompt,aliases}; do

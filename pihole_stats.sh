@@ -1,5 +1,5 @@
-#! /usr/bin/env bash
-# ~/pihole_stats
+#!/usr/bin/env bash
+#~/pihole_stats
 
 #very shitty way to get pihole stats. But hey, it works.
 
